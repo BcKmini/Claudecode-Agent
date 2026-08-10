@@ -12,7 +12,10 @@ on:
       - 'rust/**'
       - 'agents/**'
       - 'tools/**'
+      - 'tests/**'
       - 'scripts/**'
+      - 'tox.ini'
+      - 'pyproject.toml'
   pull_request:
     branches:
       - main
@@ -21,7 +24,10 @@ on:
       - 'rust/**'
       - 'agents/**'
       - 'tools/**'
+      - 'tests/**'
       - 'scripts/**'
+      - 'tox.ini'
+      - 'pyproject.toml'
   workflow_dispatch:
 
 concurrency:
@@ -49,6 +55,50 @@ jobs:
 
       - name: Check agent MD files
         run: bash scripts/validate-agents.sh
+
+  # ── Job: Python tests (tox, version matrix) ──────────────────────────────────
+  python-tests:
+    name: Python tests (${{ matrix.python-version }})
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: .
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install tox
+        run: pip install tox
+
+      - name: Run tests
+        run: tox -e py
+
+  # ── Job: Python lint/format (ruff via tox) ───────────────────────────────────
+  python-lint:
+    name: Python lint (ruff)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: .
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Install tox
+        run: pip install tox
+
+      - name: Lint + format check
+        run: tox -e lint,fmt-check
 
   # ── Job: rustfmt ─────────────────────────────────────────────────────────────
   fmt:
@@ -101,6 +151,26 @@ jobs:
 
       - name: Run workspace tests
         run: cargo test --workspace
+
+  # ── Job: MSRV verification ────────────────────────────────────────────────────
+  msrv:
+    name: MSRV verify
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: rust -> target
+
+      - name: Install cargo-msrv
+        run: cargo install cargo-msrv --locked
+
+      - name: Verify declared rust-version builds
+        working-directory: rust/claude-tools
+        run: cargo msrv verify
 
   # ── Job: Windows smoke build ─────────────────────────────────────────────────
   windows-smoke:
