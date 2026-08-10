@@ -310,7 +310,7 @@ ok "${count} slash commands → ${CLAUDE_HOME}/commands/"
 
 if need_cmd python3; then
   mkdir -p "$BIN_DIR"
-  TOOLS=(snippet claude-handoff claude-cost claude-review-diff claude-remind claude-harness claude-pipeline)
+  TOOLS=(snippet claude-handoff claude-cost claude-review-diff claude-remind claude-harness claude-pipeline claude-lessons)
   for tool in "${TOOLS[@]}"; do
     src="${REPO_DIR}/tools/${tool}.py"
     [ -f "$src" ] || continue
