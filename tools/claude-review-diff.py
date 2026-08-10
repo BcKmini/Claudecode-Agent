@@ -14,13 +14,14 @@ Usage:
 Homepage: https://github.com/BcKmini/Claudecode-Agent
 """
 
+from __future__ import annotations  # `X | None` annotations need this on Python < 3.10
+
 VERSION = "1.0.0"
 
 import argparse
 import os
 import subprocess
 import sys
-from pathlib import Path
 
 # ---------------------------------------------------------------------------
 # Color helpers
@@ -128,14 +129,14 @@ def _build_prompt(diff: str, stats: str, branch: str, args) -> str:
     )
 
     lines = [
-        f"You are a senior software engineer performing a code review.",
-        f"",
-        f"## Review Scope",
+        "You are a senior software engineer performing a code review.",
+        "",
+        "## Review Scope",
         f"Branch: `{branch}` — reviewing {scope_desc}.",
-        f"",
-        f"## Review Focus",
+        "",
+        "## Review Focus",
         f"{hint}",
-        f"",
+        "",
     ]
 
     if stats:

@@ -14,6 +14,8 @@ Usage:
 Homepage: https://github.com/BcKmini/Claudecode-Agent
 """
 
+from __future__ import annotations  # `X | None` annotations need this on Python < 3.10
+
 VERSION = "1.0.0"
 
 import argparse
@@ -197,7 +199,7 @@ examples:
 
     if not all_tasks:
         total = done_total
-        print(green(f"[OK] No pending tasks found."), file=sys.stderr)
+        print(green("[OK] No pending tasks found."), file=sys.stderr)
         if total:
             print(dim(f"     {total} completed task(s) in {[f.name for f in task_files]}"),
                   file=sys.stderr)

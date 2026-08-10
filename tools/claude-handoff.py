@@ -12,7 +12,6 @@ Homepage: https://github.com/BcKmini/Claudecode-Agent
 VERSION = "1.0.0"
 
 import argparse
-import json
 import os
 import subprocess
 import sys
@@ -95,7 +94,7 @@ def _find_todo() -> str:
             if f.exists():
                 try:
                     content = f.read_text(encoding="utf-8")
-                    lines = [l for l in content.splitlines() if l.strip()]
+                    lines = [line for line in content.splitlines() if line.strip()]
                     return "\n".join(lines[:20])
                 except Exception:
                     pass
@@ -235,7 +234,7 @@ def cmd_save(args):
     print(dim(f"     {path}"))
     print()
     print(dim("Resume next session with:"))
-    print(f"  claude-handoff load | claude")
+    print("  claude-handoff load | claude")
     print(f"  claude-handoff load --id {hid} | claude")
 
 
@@ -278,8 +277,6 @@ def cmd_list(args):
     print(f"\n  {bold('id'):<22}  {bold('project'):<18}  {bold('note')}")
     print("  " + dim("-" * 80))
     for item in items:
-        ts = item["id"][:8]  # YYYYMMDD
-        ts_fmt = f"{ts[:4]}-{ts[4:6]}-{ts[6:8]}"
         print(f"  {cyan(item['id']):<{22+9}}  "
               f"{item['project']:<18}  "
               f"{dim(item['note'])}")

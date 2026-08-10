@@ -9,10 +9,9 @@ Usage:
   claude-harness check-all
 """
 
-import sys
 import os
 import re
-import json
+import sys
 from pathlib import Path
 
 VERSION = "1.0.0"
