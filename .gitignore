@@ -14,3 +14,7 @@ desktop.ini
 
 # Rust build artifacts
 rust/target/
+
+# Python build artifacts
+__pycache__/
+*.pyc

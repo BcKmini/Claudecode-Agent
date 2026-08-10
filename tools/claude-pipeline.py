@@ -241,7 +241,8 @@ def cmd_list():
             d = json.loads(f.read_text(encoding="utf-8"))
             marker = green(" ◀ active") if f.stem == active_name else ""
             stage_count = len(d.get("stages", []))
-            print(f"  {d['name']}{marker}  {dim(f'{stage_count} stages · created {d[\"created\"][:10]}')}")
+            created = d.get("created", "")[:10]
+            print(f"  {d['name']}{marker}  {dim(f'{stage_count} stages · created {created}')}")
         except Exception:
             print(f"  {f.stem} {red('(corrupted)')}")
 

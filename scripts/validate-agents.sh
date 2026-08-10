@@ -29,7 +29,7 @@ if [ ! -d "$AGENTS_DIR" ]; then
   exit 1
 fi
 
-declare -A SEEN_NUMS
+SEEN_NUMS=" "  # space-delimited set; avoids `declare -A` for bash 3.2 (stock macOS) compatibility
 
 for f in "$AGENTS_DIR"/[0-9][0-9]-*.md; do
   [ -f "$f" ] || { warn "No agent files found in $AGENTS_DIR"; break; }
@@ -38,10 +38,10 @@ for f in "$AGENTS_DIR"/[0-9][0-9]-*.md; do
   num="${base:0:2}"
 
   # Duplicate number check
-  if [ "${SEEN_NUMS[$num]+x}" ]; then
-    fail "Duplicate agent number: $num (${SEEN_NUMS[$num]} and $base)"
-  fi
-  SEEN_NUMS[$num]="$base"
+  case "$SEEN_NUMS" in
+    *" $num "*) fail "Duplicate agent number: $num ($base)" ;;
+    *) SEEN_NUMS="$SEEN_NUMS$num " ;;
+  esac
 
   # Non-empty
   if [ ! -s "$f" ]; then
