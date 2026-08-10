@@ -79,6 +79,31 @@ Characteristics:
 
 ---
 
+## Autonomy Levels (L0-L4)
+
+Harness type (tight/loose/adaptive) controls how constrained the *output* is. Autonomy level is a separate axis: how much *human checking* the task needs before or after the AI acts. A tight harness can still require approval on every single output.
+
+> *Inspired by the 5-level autonomy model in: "AI Agent 시대, 나는 AI를 어떻게 써야 할까?" (velog.io/@mi_nini)*
+
+| Level | Who does what | Example in this project |
+|---|---|---|
+| **L0** | Human does everything — AI not involved | Final merge, production deploy |
+| **L1** | AI proposes, human executes | `planner`, `reviewer`, `security-auditor`, `harness-designer` — read-only, output is advisory |
+| **L2** | AI drafts, human reviews — **most common in practice** | `orchestrator`, `implementer`, `tester`, `performance-optimizer`, `database-expert`, `pipeline-orchestrator` |
+| **L3** | AI executes, human checks after the fact | `documenter` — low blast radius, doesn't touch code logic |
+| **L4** | Fully autonomous | Not used by default in this project — a stretch goal, not a starting point |
+
+**Rule of thumb:** pick the level the *task* needs today, not the highest one the model is capable of. A harness earns a higher autonomy level over time by building a track record, not by assumption.
+
+Declare it in the agent's frontmatter:
+```yaml
+autonomy: L2  # AI drafts, human reviews
+```
+
+`claude-harness check-all` / `claude-harness validate` fail an agent that doesn't declare one. Run `claude-harness autonomy` to print this table on the command line.
+
+---
+
 ## Context Isolation: Preventing Context Rot
 
 In long pipelines, accumulated context causes "Context Rot" — early errors contaminate later stages.
@@ -232,6 +257,9 @@ claude-harness validate agents/09-harness-designer.md
 
 # Generate a tight harness template
 claude-harness template tight my-specialist > agents/11-my-specialist.md
+
+# Print the L0-L4 autonomy level reference
+claude-harness autonomy
 
 # Track pipeline execution
 claude-pipeline init my-workflow

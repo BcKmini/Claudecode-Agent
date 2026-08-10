@@ -4,7 +4,7 @@
 
 # Claude Code Multi-Agent System
 
-**11 specialized AI agents + 7 productivity tools — all for Claude Code**
+**11 specialized AI agents + 8 productivity tools — all for Claude Code**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](LICENSE)
 [![Python 3.8+](https://img.shields.io/badge/Python-3.8%2B-blue?style=flat-square&logo=python&logoColor=white)](https://www.python.org)
@@ -12,10 +12,10 @@
 [![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey?style=flat-square)](https://github.com/BcKmini/Claudecode-Agent)
 [![Claude Code](https://img.shields.io/badge/Claude_Code-Compatible-blueviolet?style=flat-square&logo=anthropic)](https://claude.ai/code)
 [![Agents](https://img.shields.io/badge/Agents-11-green?style=flat-square)](#agent-roster)
-[![Tools](https://img.shields.io/badge/Tools-7-informational?style=flat-square)](#tools)
+[![Tools](https://img.shields.io/badge/Tools-8-informational?style=flat-square)](#tools)
 [![Bilingual](https://img.shields.io/badge/Lang-EN%20%7C%20KO-orange?style=flat-square)](#)
 
-**[한국어 README](README.ko.md)** · **[Setup Guide](docs/SETUP.md)** · **[Cheatsheet](docs/AGENT-CHEATSHEET.md)** · **[Harness Guide](docs/HARNESS-GUIDE.md)** · **[Integration](docs/INTEGRATION.md)** · **[Contributing](docs/CONTRIBUTING.md)**
+**[한국어 README](README.ko.md)** · **[Setup Guide](docs/SETUP.md)** · **[Cheatsheet](docs/AGENT-CHEATSHEET.md)** · **[Harness Guide](docs/HARNESS-GUIDE.md)** · **[MCP Guide](docs/MCP-GUIDE.md)** · **[Integration](docs/INTEGRATION.md)** · **[Contributing](docs/CONTRIBUTING.md)**
 
 </div>
 
@@ -33,6 +33,7 @@ A drop-in enhancement for **Claude Code** that gives you:
 6. **`claude-remind`** — surface incomplete TODO items at session start
 7. **`claude-harness`** — validate and generate AI harness definitions for specialist agents
 8. **`claude-pipeline`** — track multi-stage pipeline execution with quality gates and run reports
+9. **`claude-lessons`** — record why something failed and how it was fixed, searchable across sessions
 
 All tools ship as Python CLIs and as Claude Code slash commands. The core tools also ship as a single compiled **Rust binary** (`claude-tools`).
 
@@ -151,23 +152,25 @@ claude
 
 ## Agent Roster
 
-| # | Agent | Model | Job |
-|---|-------|-------|-----|
-| 00 | **orchestrator** | Opus | Breaks down requests and delegates to sub-agents |
-| 01 | **planner** | Opus | Architecture & design decisions — read-only |
-| 02 | **implementer** | Sonnet | Writes and edits code |
-| 03 | **reviewer** | Sonnet | Bug, security, quality, performance review — read-only |
-| 04 | **tester** | Sonnet | Unit, integration, E2E test authoring |
-| 05 | **security-auditor** | Opus | OWASP Top 10 audit — read-only |
-| 06 | **performance-optimizer** | Sonnet | Bottleneck analysis and optimization |
-| 07 | **database-expert** | Sonnet | Schema design, queries, migrations |
-| 08 | **documenter** | Haiku | README, API docs, inline comments |
-| 09 | **harness-designer** | Opus | Designs tight/loose/adaptive AI harnesses for automation |
-| 10 | **pipeline-orchestrator** | Opus | Manages multi-stage pipelines with context isolation |
+| # | Agent | Model | Autonomy | Job |
+|---|-------|-------|:--------:|-----|
+| 00 | **orchestrator** | Opus | L2 | Breaks down requests and delegates to sub-agents |
+| 01 | **planner** | Opus | L1 | Architecture & design decisions — read-only |
+| 02 | **implementer** | Sonnet | L2 | Writes and edits code |
+| 03 | **reviewer** | Sonnet | L1 | Bug, security, quality, performance review — read-only |
+| 04 | **tester** | Sonnet | L2 | Unit, integration, E2E test authoring |
+| 05 | **security-auditor** | Opus | L1 | OWASP Top 10 audit — read-only |
+| 06 | **performance-optimizer** | Sonnet | L2 | Bottleneck analysis and optimization |
+| 07 | **database-expert** | Sonnet | L2 | Schema design, queries, migrations |
+| 08 | **documenter** | Haiku | L3 | README, API docs, inline comments |
+| 09 | **harness-designer** | Opus | L1 | Designs tight/loose/adaptive AI harnesses for automation |
+| 10 | **pipeline-orchestrator** | Opus | L2 | Manages multi-stage pipelines with context isolation |
 
 > **All agents are bilingual** — they detect the user's language and respond in English or Korean (한국어).
 
 > Each agent carries only the context relevant to its role. Parallel execution (planner + security-auditor simultaneously) cuts wall-clock time.
+
+> **Autonomy** (L0 = human does everything → L4 = fully autonomous) is a separate axis from harness type — it says how much human checking a task needs, not how constrained the output is. See [Autonomy Levels](docs/HARNESS-GUIDE.md#autonomy-levels-l0-l4).
 
 > See [AGENT-CHEATSHEET.md](docs/AGENT-CHEATSHEET.md) for 24+ ready-to-use prompts.
 
@@ -175,7 +178,7 @@ claude
 
 ## Tools
 
-Five productivity tools that fill the gaps Claude Code doesn't cover out of the box.
+Eight productivity tools that fill the gaps Claude Code doesn't cover out of the box.
 
 ### Slash commands overview
 
@@ -188,6 +191,7 @@ Five productivity tools that fill the gaps Claude Code doesn't cover out of the 
 | `/remind` | Surface pending TODO items at session start |
 | `/harness` | Design and validate AI harness definitions |
 | `/pipeline` | Run and track multi-stage AI pipelines |
+| `/lessons` | Record and recall why past tasks failed and how they were fixed |
 
 ---
 
@@ -359,6 +363,38 @@ claude-pipeline list                             # all saved pipelines
 
 ---
 
+### Tool 8 — `claude-lessons` — Failure / Lessons-Learned Log
+
+Record why something failed and how it was fixed, so the next session (or agent) doesn't repeat it. Unlike `claude-handoff` (session-scoped, prunable), lessons accumulate indefinitely and are searchable by tag or keyword.
+
+```bash
+claude-lessons add --title "Migration timed out" --tags db,migration \
+  --symptom "ALTER TABLE locked prod for 4min" \
+  --cause "no lock_timeout set" \
+  --fix "added SET lock_timeout='2s' before DDL"
+claude-lessons list --tag db
+claude-lessons search lock_timeout
+claude-lessons context | claude    # pipe recent lessons into a new session
+```
+
+```
+/lessons add
+/lessons list --tag db
+/lessons context
+```
+
+**Typical workflow:**
+
+```bash
+# During/after debugging a tricky failure
+claude-lessons add
+
+# Start of a new session touching the same area
+claude-lessons context --tag db | claude
+```
+
+---
+
 ### Rust binary — `claude-tools`
 
 All tools compiled into one zero-dependency binary — no Python required.
@@ -435,7 +471,8 @@ Claudecode-Agent/
 │   ├── review-diff.md
 │   ├── remind.md
 │   ├── harness.md                    ← NEW /harness
-│   └── pipeline.md                   ← NEW /pipeline
+│   ├── pipeline.md                   ← NEW /pipeline
+│   └── lessons.md                    ← NEW /lessons
 │
 ├── snippets/
 │   └── defaults.json                 ← 20 built-in prompt templates
@@ -448,6 +485,7 @@ Claudecode-Agent/
 │   ├── claude-remind.py
 │   ├── claude-harness.py             ← NEW harness validator + template gen
 │   ├── claude-pipeline.py            ← NEW pipeline tracker + reporter
+│   ├── claude-lessons.py             ← NEW failure/lessons-learned log
 │   ├── install-tools.ps1             ← Windows tool installer
 │   └── install-tools.sh              ← macOS/Linux tool installer
 │
@@ -460,10 +498,14 @@ Claudecode-Agent/
 │   ├── env.rs                        ← NEW environment health check
 │   └── colors.rs
 │
+├── examples/
+│   └── mcp-lessons-server.py         ← NEW MCP server example
+│
 └── docs/
     ├── SETUP.md / SETUP.ko.md
     ├── AGENT-CHEATSHEET.md / .ko.md
     ├── HARNESS-GUIDE.md / .ko.md      ← NEW harness design guide
+    ├── MCP-GUIDE.md / .ko.md          ← NEW MCP server guide
     ├── INTEGRATION.md / .ko.md
     ├── CONTRIBUTING.md / .ko.md
     └── CLAUDE.md / .ko.md
@@ -482,6 +524,7 @@ Claudecode-Agent/
 | Check environment | `claude-tools env` |
 | Resume with pending tasks | `claude-remind \| claude` |
 | Full session restore | `claude-handoff load \| claude` |
+| Recall past failures for this area | `claude-lessons context --tag X \| claude` |
 
 ---
 

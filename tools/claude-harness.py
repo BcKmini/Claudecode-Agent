@@ -45,7 +45,16 @@ HARNESS_CHECKS = [
     ("forbidden_listed", "Forbidden actions are listed", r"(never|do not|must not|forbidden|절대)", True),
     ("tools_minimal", "Tools list is minimal", r"^tools:", True),
     ("language_support", "Bilingual language support", r"(Language:|language:|Korean|한국어)", True),
+    ("autonomy_declared", "Autonomy level (L0-L4) is declared", r"^autonomy:\s*L[0-4]", True),
 ]
+
+AUTONOMY_LEVELS = {
+    "L0": "Human does everything — AI not involved",
+    "L1": "AI proposes, human executes",
+    "L2": "AI drafts, human reviews (most common)",
+    "L3": "AI executes, human checks after the fact",
+    "L4": "Fully autonomous",
+}
 
 
 def parse_frontmatter(content):
@@ -141,6 +150,7 @@ TEMPLATES = {
 name: {name}
 description: "[EN description] | [KO 설명]"
 model: claude-sonnet-4-5
+autonomy: L2  # [why this level fits — see: claude-harness autonomy]
 tools: Read, Grep, Glob
 permissionMode: default
 ---
@@ -176,6 +186,7 @@ Before outputting, verify:
 name: {name}
 description: "[EN description] | [KO 설명]"
 model: claude-opus-4-5
+autonomy: L1  # [why this level fits — see: claude-harness autonomy]
 tools: Read, Write, Edit, Bash, Glob, Grep
 ---
 
@@ -201,6 +212,7 @@ Adapt your approach to what the user needs.
 name: {name}
 description: "[EN description] | [KO 설명]"
 model: claude-opus-4-5
+autonomy: L2  # [why this level fits — see: claude-harness autonomy]
 tools: Read, Glob, Grep, Task, TodoWrite
 ---
 
@@ -240,6 +252,17 @@ def print_template(harness_type, name="my-agent"):
     print(TEMPLATES[harness_type].format(name=name, title=title))
 
 
+def print_autonomy_levels():
+    print(bold("Autonomy Levels (L0-L4)"))
+    print(dim("=" * 50))
+    for level, desc in AUTONOMY_LEVELS.items():
+        print(f"  {bold(level)}  {desc}")
+    print()
+    print(dim("Declare one per agent with an `autonomy:` frontmatter field."))
+    print(dim("Pick the level the TASK needs, not the highest one available —"))
+    print(dim("L2 (draft + human review) is the most common in practice."))
+
+
 def usage():
     print(f"""{bold('claude-harness')} v{VERSION} — AI harness design helper
 
@@ -247,11 +270,13 @@ def usage():
   validate <agent.md>            Validate a single agent file
   check-all                      Check all agents in agents/
   template tight|loose|adaptive  Print a harness template
+  autonomy                       Print the L0-L4 autonomy level reference
 
 {bold('Examples:')}
   claude-harness validate agents/03-reviewer.md
   claude-harness check-all
   claude-harness template tight > agents/11-my-specialist.md
+  claude-harness autonomy
 """)
 
 
@@ -274,6 +299,8 @@ def main():
         harness_type = args[1] if len(args) > 1 else "tight"
         agent_name = args[2] if len(args) > 2 else "my-specialist"
         print_template(harness_type, agent_name)
+    elif cmd == "autonomy":
+        print_autonomy_levels()
     else:
         print(red(f"Unknown command: {cmd}"))
         usage()

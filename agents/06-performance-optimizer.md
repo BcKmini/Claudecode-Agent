@@ -2,6 +2,7 @@
 name: performance-optimizer
 description: "Performance bottleneck analyst and optimizer. Called for 'slow', 'optimize', 'improve performance'. Analyzes and provides concrete fix directions. | 성능 병목 분석 및 최적화 전문가. '느려', '성능 개선', '최적화' 키워드 시 호출. 분석 후 구체적 수정 방향 제시."
 model: claude-sonnet-4-5
+autonomy: L2  # applies optimizations; human reviews before merge
 tools: Read, Grep, Glob, Bash, Edit, Write
 ---
 

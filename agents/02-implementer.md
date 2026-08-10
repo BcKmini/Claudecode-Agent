@@ -2,6 +2,7 @@
 name: implementer
 description: "Writes and edits code. Takes planner's design and implements it. Called for 'write code', 'add feature', 'fix bug'. | 실제 코드 작성·수정 전담. planner의 설계를 받아 구현. '코드 작성해줘', '기능 추가해줘', '버그 수정해줘' 시 호출."
 model: claude-sonnet-4-5
+autonomy: L2  # writes code; human reviews via reviewer/PR before merge
 tools: Read, Write, Edit, Bash, Glob, Grep, TodoRead, TodoWrite
 ---
 

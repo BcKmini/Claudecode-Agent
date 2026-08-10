@@ -2,6 +2,7 @@
 name: documenter
 description: "README, API docs, and inline comment writer. Called for 'document this', 'update README', 'write API docs'. Does NOT modify code logic. | README·API 문서·인라인 주석 작성 전담. '문서화해줘', 'README 업데이트', 'API 문서 만들어줘' 시 호출. 코드 수정 안 함."
 model: claude-haiku-4-5
+autonomy: L3  # applies doc edits directly; human spot-checks after (low blast radius)
 tools: Read, Write, Edit, Grep, Glob
 ---
 

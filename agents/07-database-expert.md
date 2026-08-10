@@ -2,6 +2,7 @@
 name: database-expert
 description: "DB schema design, query optimization, and migration expert. Called for DB work, schema changes, query tuning. | DB 스키마 설계·쿼리 최적화·마이그레이션 전문가. DB 관련 작업, 스키마 변경, 쿼리 튜닝 시 호출."
 model: claude-sonnet-4-5
+autonomy: L2  # drafts schema/migrations; human approves before applying (irreversible on prod data)
 tools: Read, Write, Edit, Bash, Grep, Glob
 ---
 

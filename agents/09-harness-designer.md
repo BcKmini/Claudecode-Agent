@@ -2,6 +2,7 @@
 name: harness-designer
 description: "AI harness architect. Designs tight/loose/adaptive harnesses for specialist AI agents. Called for 'design an AI pipeline', 'build a specialist agent', 'automate this workflow with AI'. | AI 하네스 설계 전문가. 특정 문제에 최적화된 타이트·느슨·적응형 하네스를 설계. 'AI 파이프라인 설계해줘', '스페셜리스트 에이전트 만들어줘', 'AI로 이 업무 자동화해줘' 시 호출."
 model: claude-opus-4-5
+autonomy: L1  # proposes a harness design; human implements and approves
 tools: Read, Grep, Glob
 permissionMode: default
 ---
@@ -87,9 +88,21 @@ Verdict: PASS | WARNING | MISMATCH | ERROR
 Default behavior: warn (not block), unless high-stakes
 ```
 
-### Step 5: Human Oversight Points (사람의 개입 지점)
+### Step 5: Autonomy Level (자율성 수준)
+Pick the level the task needs — not the highest one available:
 ```
-- What decisions does the AI make autonomously?
+L0  Human does everything — AI not involved
+L1  AI proposes, human executes
+L2  AI drafts, human reviews          ← most common in practice
+L3  AI executes, human checks after the fact
+L4  Fully autonomous
+```
+Full autonomy is a stretch goal, not a default. Choose the level that matches the task's
+blast radius today; raise it later once the harness has a track record.
+
+### Step 6: Human Oversight Points (사람의 개입 지점)
+```
+- What decisions does the AI make autonomously? (bounded by the autonomy level above)
 - What requires human approval before proceeding?
 - What is NEVER automated (final merge, production apply, etc.)?
 ```
@@ -103,6 +116,9 @@ Default behavior: warn (not block), unless high-stakes
 
 ### Harness Type
 [Tight / Loose / Adaptive] — reason
+
+### Autonomy Level
+[L0-L4] — reason
 
 ### Specialist Agents Required
 | Agent | Persona | Input | Output | Forbidden |

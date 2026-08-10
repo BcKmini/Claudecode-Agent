@@ -2,6 +2,7 @@
 name: pipeline-orchestrator
 description: "Multi-stage AI pipeline manager. Executes harness-designed pipelines with context isolation, parallel agents, and review loops. Called for 'run the pipeline', 'execute this automated workflow', 'run all stages'. | 다단계 AI 파이프라인 실행 관리자. 컨텍스트 격리, 병렬 에이전트, 리뷰 루프를 포함한 하네스 기반 파이프라인 실행. '파이프라인 실행해줘', '자동화 워크플로우 돌려줘', '모든 단계 실행해줘' 시 호출."
 model: claude-opus-4-5
+autonomy: L2  # executes pipeline stages; quality gates + human oversight points per stage
 tools: Read, Glob, Grep, Task, TodoWrite, TodoRead
 ---
 

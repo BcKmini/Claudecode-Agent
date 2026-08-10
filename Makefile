@@ -58,7 +58,7 @@ install-commands: ## Install slash commands to ~/.claude/commands/
 
 install-tools: ## Install Python tools to ~/.local/bin/
 	@mkdir -p $(BIN_TARGET)
-	@for tool in snippet claude-handoff claude-cost claude-review-diff claude-remind claude-harness claude-pipeline; do \
+	@for tool in snippet claude-handoff claude-cost claude-review-diff claude-remind claude-harness claude-pipeline claude-lessons; do \
 	  src="$(TOOLS_DIR)/$$tool.py"; \
 	  dst="$(BIN_TARGET)/$$tool"; \
 	  if [ -f "$$src" ]; then \
@@ -96,6 +96,9 @@ test-python: ## Smoke-test Python tools
 	@echo "Testing claude-pipeline..."
 	@$(PYTHON) $(TOOLS_DIR)/claude-pipeline.py --help > /dev/null \
 	  && echo "  ✓ pipeline --help" || echo "  ✗ pipeline"
+	@echo "Testing claude-lessons..."
+	@$(PYTHON) $(TOOLS_DIR)/claude-lessons.py --help > /dev/null \
+	  && echo "  ✓ lessons --help" || echo "  ✗ lessons"
 
 test-agents: ## Verify agent files exist and are non-empty
 	@ok=0; fail=0; \
@@ -143,7 +146,7 @@ status: ## Show git + agent + tool install status
 	@ls $(AGENTS_TARGET)/*.md 2>/dev/null | wc -l | xargs -I{} echo "  {} agents in $(AGENTS_TARGET)"
 	@echo ""
 	@echo "=== Tools in PATH ==="
-	@for t in snippet claude-handoff claude-cost claude-review-diff claude-remind claude-harness claude-pipeline claude-tools; do \
+	@for t in snippet claude-handoff claude-cost claude-review-diff claude-remind claude-harness claude-pipeline claude-lessons claude-tools; do \
 	  command -v $$t >/dev/null 2>&1 \
 	    && echo "  ✓ $$t" \
 	    || echo "  ✗ $$t (not installed)"; \

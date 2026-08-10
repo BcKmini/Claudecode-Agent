@@ -97,6 +97,10 @@ python tools/snippet.py run my-snippet --dry-run
 - `NO_COLOR` environment variable must be respected
 - Exit codes: `0` success, `1` not found / exists, `2` usage error
 
+`examples/` is the one exception to "no external dependencies" — it's for runnable integration
+examples (e.g. an MCP server) that legitimately need a third-party package. Keep those out of
+`tools/`; state the dependency clearly in the example's docstring and in `docs/MCP-GUIDE.md` if relevant.
+
 ### Rust (claude-tools)
 - `cargo check` must pass with no errors
 - Minimize `cargo clippy` warnings

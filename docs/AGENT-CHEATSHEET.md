@@ -131,6 +131,17 @@ Early exit if: no new findings or no improvement vs. previous round.
 claude-harness check-all   # validate all agents in agents/
 ```
 
+### Pick an Autonomy Level Before Designing a Harness
+```bash
+claude-harness autonomy    # print the L0-L4 reference table
+```
+```
+Have harness-designer design a harness for [task].
+State the autonomy level (L0-L4) explicitly and justify it —
+default to L2 (AI drafts, human reviews) unless the task's
+blast radius clearly justifies less oversight.
+```
+
 ### Pipeline Tracking Workflow
 ```bash
 claude-pipeline init my-workflow
@@ -197,6 +208,8 @@ claude --agent reviewer "re-check src/auth after implementer changes"
 | `/harness validate` | Validate agent harness | `/harness validate agents/03-reviewer.md` |
 | `/pipeline run` | Run a multi-stage pipeline | `/pipeline run analyze and patch slow queries` |
 | `/pipeline status` | Show pipeline run status | `/pipeline status` |
+| `/lessons add` | Record why something failed and the fix | `/lessons add` |
+| `/lessons context` | Recall past failures for a topic | `/lessons context --tag db` |
 
 ---
 
@@ -211,6 +224,7 @@ claude --agent reviewer "re-check src/auth after implementer changes"
 | Environment health check | `claude-tools env` |
 | Resume with pending tasks | `claude-remind \| claude` |
 | Full session restore | `claude-handoff load \| claude` |
+| Recall past failures for this area | `claude-lessons context --tag X \| claude` |
 | Reference a specific file | `@src/auth/login.ts review this file` |
 
 ---
@@ -220,10 +234,12 @@ claude --agent reviewer "re-check src/auth after implementer changes"
 ```bash
 # End of session
 claude-handoff save --note "OAuth done, next: email verification"
+claude-lessons add              # only if something failed and got fixed today
 
-# Start of next session (pick one or both)
+# Start of next session (pick what's relevant)
 claude-remind | claude          # see pending TODO items
 claude-handoff load | claude    # full git context restore
+claude-lessons context | claude # recall past failures before touching this area again
 ```
 
 ---

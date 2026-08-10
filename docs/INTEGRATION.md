@@ -99,6 +99,8 @@ docker run -d --restart always \
 docker compose run rag-ingest   # index your codebase
 ```
 
+> Turning one of *this* repo's own tools (e.g. `claude-lessons`) into an MCP server instead of a manual pipe is a separate, smaller-scale pattern — see [MCP-GUIDE.md](MCP-GUIDE.md).
+
 ### 4. Event Routing Comparison
 
 | Feature | Claude Code | claw-code |
