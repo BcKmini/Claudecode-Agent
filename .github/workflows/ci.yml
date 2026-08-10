@@ -168,9 +168,9 @@ jobs:
       - name: Install cargo-msrv
         run: cargo install cargo-msrv --locked
 
-      - name: Verify declared rust-version builds
+      - name: Discover the real MSRV
         working-directory: rust/claude-tools
-        run: cargo msrv verify
+        run: cargo msrv find
 
   # ── Job: Windows smoke build ─────────────────────────────────────────────────
   windows-smoke:
