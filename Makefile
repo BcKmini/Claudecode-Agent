@@ -73,8 +73,11 @@ install-rust: build ## Build Rust binary and install to ~/.local/bin/
 	@echo "Installed claude-tools → $(BIN_TARGET)/claude-tools"
 
 # ─── test ──────────────────────────────────────────────────────────────────
-.PHONY: test test-rust test-python test-agents
-test: test-rust test-python ## Run all tests
+.PHONY: test test-rust test-python test-agents tox
+test: test-rust test-python ## Run all tests (fast, zero-dependency smoke checks)
+
+tox: ## Full Python test matrix + lint (requires: pip install tox ruff)
+	tox
 
 test-rust: ## Cargo check + clippy
 	cd $(RUST_DIR) && $(CARGO) check
@@ -112,6 +115,9 @@ test-agents: ## Verify agent files exist and are non-empty
 .PHONY: lint fmt fmt-check
 lint: ## Clippy lint (Rust)
 	cd $(RUST_DIR) && $(CARGO) clippy -- -D warnings
+
+msrv: ## Verify the crate builds on its declared MSRV (requires: cargo install cargo-msrv)
+	cd $(RUST_DIR)/claude-tools && cargo msrv verify
 
 fmt: ## Format all code (Rust + Python)
 	bash scripts/fmt.sh

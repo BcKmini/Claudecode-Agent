@@ -8,7 +8,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](LICENSE)
 [![Python 3.8+](https://img.shields.io/badge/Python-3.8%2B-blue?style=flat-square&logo=python&logoColor=white)](https://www.python.org)
-[![Rust](https://img.shields.io/badge/Rust-1.75%2B-orange?style=flat-square&logo=rust)](https://www.rust-lang.org)
+[![Rust](https://img.shields.io/badge/Rust-1.78%2B-orange?style=flat-square&logo=rust)](https://www.rust-lang.org)
 [![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey?style=flat-square)](https://github.com/BcKmini/Claudecode-Agent)
 [![Claude Code](https://img.shields.io/badge/Claude_Code-Compatible-blueviolet?style=flat-square&logo=anthropic)](https://claude.ai/code)
 [![Agents](https://img.shields.io/badge/Agents-11-green?style=flat-square)](#agent-roster)
@@ -433,9 +433,11 @@ make help           # list all targets
 make install        # agents + slash commands + Python tools
 make install-rust   # build and install Rust binary
 make build          # cargo build --release
-make test           # all tests
-make lint           # clippy + ruff
-make fmt            # rustfmt + ruff format
+make test           # fast smoke tests (no extra deps)
+make tox            # full Python test matrix (py38-py313) + lint + fmt-check
+make msrv           # verify the Rust crate builds on its declared MSRV
+make lint           # clippy (Rust)
+make fmt            # rustfmt + ruff format (scoped — see CONTRIBUTING.md)
 make status         # git log + tool install check
 make env            # Claude environment health check
 make clean          # remove build artifacts
@@ -448,6 +450,8 @@ make clean          # remove build artifacts
 ```
 Claudecode-Agent/
 ├── Makefile                          ← build / install / test / clean
+├── tox.ini                           ← Python test matrix + lint + fmt-check
+├── pyproject.toml                    ← ruff config (scoped to this repo's style)
 ├── setup-agents.ps1                  ← Windows quick installer
 ├── setup-agents.sh                   ← macOS / Linux quick installer
 │
@@ -488,6 +492,10 @@ Claudecode-Agent/
 │   ├── claude-lessons.py             ← NEW failure/lessons-learned log
 │   ├── install-tools.ps1             ← Windows tool installer
 │   └── install-tools.sh              ← macOS/Linux tool installer
+│
+├── tests/                            ← pytest suite for tools/*.py
+│   ├── conftest.py                   ← run_tool / home / git_repo fixtures
+│   └── test_*.py                     ← one file per tool
 │
 ├── rust/claude-tools/src/
 │   ├── main.rs

@@ -12,10 +12,10 @@ Usage:
   claude-pipeline clear
 """
 
-import sys
-import os
-import json
 import datetime
+import json
+import os
+import sys
 from pathlib import Path
 
 VERSION = "1.0.0"
@@ -180,10 +180,14 @@ def cmd_status():
               for s in ["pass", "warn", "fail", "running"]}
     print()
     summary_parts = []
-    if counts["pass"]: summary_parts.append(green(f"{counts['pass']} passed"))
-    if counts["warn"]: summary_parts.append(yellow(f"{counts['warn']} warnings"))
-    if counts["fail"]: summary_parts.append(red(f"{counts['fail']} failed"))
-    if counts["running"]: summary_parts.append(blue(f"{counts['running']} running"))
+    if counts["pass"]:
+        summary_parts.append(green(f"{counts['pass']} passed"))
+    if counts["warn"]:
+        summary_parts.append(yellow(f"{counts['warn']} warnings"))
+    if counts["fail"]:
+        summary_parts.append(red(f"{counts['fail']} failed"))
+    if counts["running"]:
+        summary_parts.append(blue(f"{counts['running']} running"))
     print("  " + " · ".join(summary_parts))
 
 
@@ -202,15 +206,15 @@ def cmd_report():
 
     lines = [
         f"## Pipeline Run Report: {data['name']}",
-        f"",
-        f"### Summary",
+        "",
+        "### Summary",
         f"- Total stages: {len(stages)}",
         f"- Passed: {len(passed)} | Warnings: {len(warned)} | Failed: {len(failed)}",
         f"- Run started: {data['created']}",
-        f"",
-        f"### Stage Results",
-        f"| Stage | Status | Notes |",
-        f"|-------|--------|-------|",
+        "",
+        "### Stage Results",
+        "| Stage | Status | Notes |",
+        "|-------|--------|-------|",
     ]
 
     for s in stages:
@@ -219,7 +223,7 @@ def cmd_report():
         lines.append(f"| {s['name']} | {icon} {s['status'].upper()} | {note} |")
 
     if failed:
-        lines += [f"", f"### Failed Stages — Human Review Required"]
+        lines += ["", "### Failed Stages — Human Review Required"]
         for s in failed:
             lines.append(f"- **{s['name']}**: {s.get('note', 'no details')}")
 
