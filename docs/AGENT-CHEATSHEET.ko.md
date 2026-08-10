@@ -131,6 +131,17 @@ Produce a run report at the end.
 claude-harness check-all   # agents/ 폴더 전체 검증
 ```
 
+### 하네스 설계 전에 자율성 레벨부터 정하기
+```bash
+claude-harness autonomy    # L0-L4 참조표 출력
+```
+```
+Have harness-designer design a harness for [작업].
+자율성 레벨(L0-L4)을 명시적으로 정하고 근거를 밝혀줘 —
+작업의 영향 범위가 명확히 낮은 감독으로도 충분하지 않다면
+기본값은 L2(AI 초안, 사람 리뷰)로 해줘.
+```
+
 ### 파이프라인 추적 워크플로우
 ```bash
 claude-pipeline init my-workflow
@@ -197,6 +208,8 @@ claude --agent reviewer "re-check src/auth after implementer changes"
 | `/harness validate` | 에이전트 하네스 검증 | `/harness validate agents/03-reviewer.md` |
 | `/pipeline run` | 다단계 파이프라인 실행 | `/pipeline run 분석 및 패치 생성` |
 | `/pipeline status` | 파이프라인 실행 현황 | `/pipeline status` |
+| `/lessons add` | 실패 원인과 해결법 기록 | `/lessons add` |
+| `/lessons context` | 특정 주제의 과거 실패 회상 | `/lessons context --tag db` |
 
 ---
 
@@ -211,6 +224,7 @@ claude --agent reviewer "re-check src/auth after implementer changes"
 | 환경 헬스체크 | `claude-tools env` |
 | 미완료 작업으로 재개 | `claude-remind \| claude` |
 | 전체 세션 복원 | `claude-handoff load \| claude` |
+| 이 영역의 과거 실패 회상 | `claude-lessons context --tag X \| claude` |
 | 특정 파일만 참조 | `@src/auth/login.ts 이 파일 리뷰해줘` |
 
 ---
@@ -220,10 +234,12 @@ claude --agent reviewer "re-check src/auth after implementer changes"
 ```bash
 # 세션 종료
 claude-handoff save --note "OAuth 완료, 다음: 이메일 인증"
+claude-lessons add              # 오늘 실패했다가 고친 게 있을 때만
 
-# 세션 시작 (하나 또는 둘 다 사용)
+# 세션 시작 (필요한 것 선택)
 claude-remind | claude          # 미완료 TODO 항목 확인
 claude-handoff load | claude    # 전체 git 컨텍스트 복원
+claude-lessons context | claude # 이 영역을 다시 건드리기 전 과거 실패 회상
 ```
 
 ---

@@ -1,6 +1,6 @@
 [← README로 돌아가기](../README.md)
 
-**English** · **[한국어](HARNESS-GUIDE.ko.md)**
+**[English](HARNESS-GUIDE.md)** · **한국어**
 
 # AI 하네스 설계 가이드
 
@@ -76,6 +76,31 @@ AI 기반 워크플로우에서 엔지니어의 역할:
 **트레이드오프:** 복잡한 자동화에 가장 강력; 설계 복잡도 가장 높음.
 
 **이 프로젝트의 예시 에이전트:** `orchestrator`, `pipeline-orchestrator`
+
+---
+
+## 자율성 레벨 (L0-L4)
+
+하네스 유형(타이트/느슨/적응형)은 *출력*이 얼마나 제약되는지를 결정합니다. 자율성 레벨은 별개의 축입니다 — 작업 전후로 *사람의 확인*이 얼마나 필요한지를 나타냅니다. 타이트 하네스라도 모든 출력에 승인이 필요할 수 있습니다.
+
+> *참고: "AI Agent 시대, 나는 AI를 어떻게 써야 할까?" (velog.io/@mi_nini)의 5단계 자율성 모델*
+
+| 레벨 | 누가 무엇을 하는가 | 이 프로젝트의 예시 |
+|---|---|---|
+| **L0** | 사람이 전부 담당 — AI 미개입 | 최종 머지, 프로덕션 배포 |
+| **L1** | AI 제안, 사람 실행 | `planner`, `reviewer`, `security-auditor`, `harness-designer` — 읽기 전용, 출력은 참고용 |
+| **L2** | AI 초안, 사람 리뷰 — **실무에서 가장 일반적** | `orchestrator`, `implementer`, `tester`, `performance-optimizer`, `database-expert`, `pipeline-orchestrator` |
+| **L3** | AI 실행, 사후 확인 | `documenter` — 영향 범위가 작고 코드 로직은 건드리지 않음 |
+| **L4** | 완전 자율 | 이 프로젝트에서 기본값으로 사용하지 않음 — 시작점이 아니라 장기 목표 |
+
+**원칙:** 모델이 낼 수 있는 최고 레벨이 아니라 *작업*에 맞는 레벨을 선택하세요. 하네스는 가정이 아니라 실적을 쌓으며 더 높은 자율성을 얻습니다.
+
+에이전트 frontmatter에 명시:
+```yaml
+autonomy: L2  # AI 초안, 사람 리뷰
+```
+
+`claude-harness check-all` / `claude-harness validate`는 자율성 레벨을 선언하지 않은 에이전트를 실패 처리합니다. `claude-harness autonomy`로 이 표를 커맨드라인에 출력할 수 있습니다.
 
 ---
 
@@ -232,6 +257,9 @@ claude-harness validate agents/09-harness-designer.md
 
 # 타이트 하네스 템플릿 생성
 claude-harness template tight my-specialist > agents/11-my-specialist.md
+
+# L0-L4 자율성 레벨 참조표 출력
+claude-harness autonomy
 
 # 파이프라인 실행 추적
 claude-pipeline init my-workflow

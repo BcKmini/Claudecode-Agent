@@ -2,6 +2,7 @@
 name: tester
 description: "Writes and runs unit, integration, and E2E tests. Called after reviewer approval. Triggered by 'write tests', 'increase coverage'. | 유닛·통합·E2E 테스트 작성 및 실행 전담. reviewer 승인 후 호출. '테스트 작성해줘', '테스트 커버리지 높여줘' 시 호출."
 model: claude-sonnet-4-5
+autonomy: L2  # writes/runs tests; human reviews results before merge
 tools: Read, Write, Edit, Bash, Glob, Grep
 ---
 

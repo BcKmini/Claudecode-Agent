@@ -8,6 +8,7 @@ Design an AI harness for automating a specific workflow.
 /harness design <task description>
 /harness validate <agent-file.md>
 /harness types
+/harness autonomy
 ```
 
 ---
@@ -59,6 +60,7 @@ Reviews an existing agent `.md` file and checks:
 - [ ] Output format is constrained
 - [ ] Forbidden actions are listed
 - [ ] Tools are minimal (only what's needed)
+- [ ] Autonomy level (L0-L4) is declared
 - [ ] Human oversight point is defined
 
 ---
@@ -66,6 +68,13 @@ Reviews an existing agent `.md` file and checks:
 ## /harness types
 
 Prints a quick reference of all three harness types with examples and trade-offs.
+
+---
+
+## /harness autonomy
+
+Prints the L0-L4 autonomy level reference (`claude-harness autonomy`) — how much human
+checking a task needs, independent of harness type. See `docs/HARNESS-GUIDE.md#autonomy-levels-l0-l4`.
 
 ---
 

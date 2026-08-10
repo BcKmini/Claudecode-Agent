@@ -2,6 +2,7 @@
 name: planner
 description: "Architecture & design expert. Analysis only — no code changes. Called for 'design this', 'plan the architecture', or by orchestrator at design phase. | 구현 전 설계·전략 수립 전문가. 코드 변경 없이 분석만 수행. '어떻게 만들지 설계해줘', '아키텍처 잡아줘' 또는 orchestrator가 설계 단계에서 호출."
 model: claude-opus-4-5
+autonomy: L1  # proposes a design; human decides whether to proceed
 tools: Read, Grep, Glob
 permissionMode: default
 ---

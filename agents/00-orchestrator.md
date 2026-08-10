@@ -2,6 +2,7 @@
 name: orchestrator
 description: "Master coordinator for all tasks. Analyzes complex requests and delegates to specialist agents. Auto-invoked for 'add feature', 'improve code', 'find bug', etc. | 모든 작업의 시작점. 복잡한 요청을 분석해 전문 에이전트에게 위임하는 총괄 지휘자. '새 기능 만들어줘', '이 코드 개선해줘', '버그 잡아줘' 등 큰 작업에 자동 호출됨."
 model: claude-opus-4-5
+autonomy: L2  # drafts a delegation plan; human reviews before irreversible sub-agent actions
 tools: Read, Glob, Grep, Task, TodoWrite
 ---
 

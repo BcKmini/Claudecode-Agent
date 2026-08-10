@@ -2,6 +2,7 @@
 name: security-auditor
 description: "Security vulnerability specialist. Called before PRs or when 'security review' is requested. OWASP Top 10 audit. Read-only. | 보안 취약점 전문 감사. PR 전 또는 '보안 검토해줘' 시 호출. OWASP Top 10 기준 검토. 읽기 전용."
 model: claude-opus-4-5
+autonomy: L1  # read-only audit; human judges risk and remediation
 tools: Read, Grep, Glob, Bash
 permissionMode: default
 ---
