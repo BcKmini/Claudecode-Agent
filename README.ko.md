@@ -4,7 +4,7 @@
 
 # Claude Code 멀티 에이전트 시스템
 
-**Claude Code를 위한 11개의 전문 에이전트 + 7개의 생산성 도구**
+**Claude Code를 위한 11개의 전문 에이전트 + 8개의 생산성 도구**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](LICENSE)
 [![Python 3.8+](https://img.shields.io/badge/Python-3.8%2B-blue?style=flat-square&logo=python&logoColor=white)](https://www.python.org)
@@ -12,10 +12,10 @@
 [![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey?style=flat-square)](https://github.com/BcKmini/Claudecode-Agent)
 [![Claude Code](https://img.shields.io/badge/Claude_Code-Compatible-blueviolet?style=flat-square&logo=anthropic)](https://claude.ai/code)
 [![Agents](https://img.shields.io/badge/Agents-11-green?style=flat-square)](#에이전트-구성)
-[![Tools](https://img.shields.io/badge/Tools-7-informational?style=flat-square)](#도구)
+[![Tools](https://img.shields.io/badge/Tools-8-informational?style=flat-square)](#도구)
 [![Bilingual](https://img.shields.io/badge/Lang-EN%20%7C%20KO-orange?style=flat-square)](#)
 
-**[English README](README.md)** · **[환경 세팅](docs/SETUP.ko.md)** · **[치트시트](docs/AGENT-CHEATSHEET.ko.md)** · **[하네스 가이드](docs/HARNESS-GUIDE.ko.md)** · **[연동 가이드](docs/INTEGRATION.ko.md)** · **[기여 가이드](docs/CONTRIBUTING.ko.md)**
+**[English README](README.md)** · **[환경 세팅](docs/SETUP.ko.md)** · **[치트시트](docs/AGENT-CHEATSHEET.ko.md)** · **[하네스 가이드](docs/HARNESS-GUIDE.ko.md)** · **[MCP 가이드](docs/MCP-GUIDE.ko.md)** · **[연동 가이드](docs/INTEGRATION.ko.md)** · **[기여 가이드](docs/CONTRIBUTING.ko.md)**
 
 </div>
 
@@ -33,6 +33,7 @@
 6. **`claude-remind`** — 세션 시작 시 TODO 미완료 항목을 자동으로 표시
 7. **`claude-harness`** — 에이전트 하네스 정의를 검증하고 템플릿을 생성
 8. **`claude-pipeline`** — 다단계 파이프라인 실행을 추적하고 보고서 생성
+9. **`claude-lessons`** — 무엇이 왜 실패했고 어떻게 고쳤는지 기록하고, 세션을 넘나들며 검색
 
 모든 도구는 Python CLI와 Claude Code 슬래시 커맨드로 제공됩니다. 핵심 도구는 단일 **Rust 바이너리**(`claude-tools`)로도 제공됩니다.
 
@@ -146,23 +147,25 @@ claude
 
 ## 에이전트 구성
 
-| # | 에이전트 | 모델 | 역할 |
-|---|---------|------|------|
-| 00 | **orchestrator** | Opus | 작업 분해 및 서브 에이전트 위임 총괄 |
-| 01 | **planner** | Opus | 아키텍처·설계 결정 — 읽기 전용 |
-| 02 | **implementer** | Sonnet | 실제 코드 작성·수정 |
-| 03 | **reviewer** | Sonnet | 버그·보안·품질·성능 리뷰 — 읽기 전용 |
-| 04 | **tester** | Sonnet | 유닛·통합·E2E 테스트 작성 |
-| 05 | **security-auditor** | Opus | OWASP Top 10 기준 보안 감사 — 읽기 전용 |
-| 06 | **performance-optimizer** | Sonnet | 성능 병목 분석 및 최적화 |
-| 07 | **database-expert** | Sonnet | DB 스키마 설계·쿼리·마이그레이션 |
-| 08 | **documenter** | Haiku | README·API 문서·인라인 주석 작성 |
-| 09 | **harness-designer** | Opus | 타이트·느슨·적응형 AI 하네스 설계 |
-| 10 | **pipeline-orchestrator** | Opus | 컨텍스트 격리 기반 다단계 파이프라인 실행 관리 |
+| # | 에이전트 | 모델 | 자율성 | 역할 |
+|---|---------|------|:---:|------|
+| 00 | **orchestrator** | Opus | L2 | 작업 분해 및 서브 에이전트 위임 총괄 |
+| 01 | **planner** | Opus | L1 | 아키텍처·설계 결정 — 읽기 전용 |
+| 02 | **implementer** | Sonnet | L2 | 실제 코드 작성·수정 |
+| 03 | **reviewer** | Sonnet | L1 | 버그·보안·품질·성능 리뷰 — 읽기 전용 |
+| 04 | **tester** | Sonnet | L2 | 유닛·통합·E2E 테스트 작성 |
+| 05 | **security-auditor** | Opus | L1 | OWASP Top 10 기준 보안 감사 — 읽기 전용 |
+| 06 | **performance-optimizer** | Sonnet | L2 | 성능 병목 분석 및 최적화 |
+| 07 | **database-expert** | Sonnet | L2 | DB 스키마 설계·쿼리·마이그레이션 |
+| 08 | **documenter** | Haiku | L3 | README·API 문서·인라인 주석 작성 |
+| 09 | **harness-designer** | Opus | L1 | 타이트·느슨·적응형 AI 하네스 설계 |
+| 10 | **pipeline-orchestrator** | Opus | L2 | 컨텍스트 격리 기반 다단계 파이프라인 실행 관리 |
 
 > **모든 에이전트가 이중 언어를 지원합니다** — 사용자 언어를 감지해 한국어 또는 영어로 응답합니다.
 
 > 각 에이전트는 자기 역할에 관련된 컨텍스트만 가집니다. 병렬 실행(planner + security-auditor 동시)으로 작업 시간도 단축됩니다.
+
+> **자율성**(L0 = 사람이 전부 담당 → L4 = 완전 자율)은 하네스 유형과 별개의 축입니다 — 출력이 얼마나 제약되는지가 아니라, 얼마나 사람이 확인해야 하는지를 나타냅니다. 자세한 내용은 [자율성 레벨](docs/HARNESS-GUIDE.ko.md#자율성-레벨-l0-l4) 참고.
 
 > 바로 쓸 수 있는 프롬프트 24개 이상 → [AGENT-CHEATSHEET.ko.md](docs/AGENT-CHEATSHEET.ko.md)
 
@@ -170,7 +173,7 @@ claude
 
 ## 도구
 
-Claude Code가 기본으로 제공하지 않는 기능을 채우는 7가지 도구.
+Claude Code가 기본으로 제공하지 않는 기능을 채우는 8가지 도구.
 
 ### 슬래시 커맨드 한눈에 보기
 
@@ -183,6 +186,7 @@ Claude Code가 기본으로 제공하지 않는 기능을 채우는 7가지 도�
 | `/pipeline` | 다단계 AI 파이프라인 실행 및 추적 |
 | `/review-diff` | git diff 기반 코드 리뷰 프롬프트 |
 | `/remind` | 세션 시작 시 TODO 미완료 항목 표시 |
+| `/lessons` | 실패 원인과 해결법 기록 및 회상 |
 
 ---
 
@@ -305,6 +309,90 @@ claude-handoff load | claude   # 전체 컨텍스트 복원
 
 ---
 
+### 도구 6 — `claude-harness` — 하네스 검증기 & 템플릿 생성기
+
+에이전트 하네스 정의를 검증하고 커맨드라인에서 하네스 템플릿을 생성합니다.
+
+```bash
+claude-harness check-all                         # agents/ 전체 에이전트 검증
+claude-harness validate agents/09-harness-designer.md   # 단일 에이전트 검증
+claude-harness template tight my-specialist      # 타이트 하네스 템플릿 출력
+claude-harness template adaptive my-orchestrator # 적응형 하네스 템플릿 출력
+claude-harness autonomy                          # L0-L4 자율성 레벨 참조표 출력
+```
+
+```
+/harness design 슬로우 쿼리 탐지 및 패치 자동화
+/harness validate agents/03-reviewer.md
+/harness types
+/harness autonomy
+```
+
+**에이전트별 검사 항목:**
+- 역할이 명확히 스코프되어 있는가
+- 출력 형식이 제약되어 있는가
+- 금지 행동이 명시되어 있는가
+- 도구 목록이 최소한인가
+- 자율성 레벨(L0-L4)이 선언되어 있는가
+- 이중 언어 지원이 있는가
+
+---
+
+### 도구 7 — `claude-pipeline` — 파이프라인 추적기 & 리포터
+
+다단계 AI 파이프라인 실행을 추적하고, 단계별 결과를 기록하고, 마크다운 실행 보고서를 생성합니다.
+
+```bash
+claude-pipeline init slow-query-fix              # 파이프라인 생성 및 활성화
+claude-pipeline stage "detection" start
+claude-pipeline stage "detection" pass --note "슬로우 쿼리 3개 발견"
+claude-pipeline stage "patch-gen" start
+claude-pipeline stage "patch-gen" warn --note "1개 쿼리는 안전한 수정 불가"
+claude-pipeline status                           # 실시간 상태 표시
+claude-pipeline report                           # 마크다운 실행 보고서
+claude-pipeline list                             # 저장된 모든 파이프라인
+```
+
+```
+/pipeline run 슬로우 쿼리 분석 및 리뷰 루프 포함 패치 생성
+/pipeline status
+/pipeline stages
+```
+
+---
+
+### 도구 8 — `claude-lessons` — 실패/교훈 기록
+
+무엇이 왜 실패했고 어떻게 고쳤는지 기록해서, 다음 세션(또는 다른 에이전트)이 같은 실수를 반복하지 않게 합니다. 세션 단위로 정리되는 `claude-handoff`와 달리, 교훈은 무기한 누적되며 태그·키워드로 검색할 수 있습니다.
+
+```bash
+claude-lessons add --title "마이그레이션 타임아웃" --tags db,migration \
+  --symptom "ALTER TABLE이 프로덕션을 4분간 잠금" \
+  --cause "lock_timeout 미설정" \
+  --fix "DDL 전에 SET lock_timeout='2s' 추가"
+claude-lessons list --tag db
+claude-lessons search lock_timeout
+claude-lessons context | claude    # 최근 교훈을 새 세션에 파이프
+```
+
+```
+/lessons add
+/lessons list --tag db
+/lessons context
+```
+
+**전형적인 워크플로우:**
+
+```bash
+# 까다로운 실패를 디버깅한 직후
+claude-lessons add
+
+# 같은 영역을 다시 건드리는 세션 시작 시
+claude-lessons context --tag db | claude
+```
+
+---
+
 ### Rust 바이너리 — `claude-tools`
 
 모든 도구를 의존성 없는 단일 바이너리로 컴파일 — Python 불필요.
@@ -356,8 +444,9 @@ make clean          # 빌드 아티팩트 제거
 ## 저장소 구조
 
 ```
-Claudecode-Agent/
+claude-code-use/
 ├── Makefile                          ← 빌드 / 설치 / 테스트 / 정리
+├── install.sh                        ← 원라인 설치 스크립트
 ├── setup-agents.ps1                  ← Windows 빠른 설치
 ├── setup-agents.sh                   ← macOS / Linux 빠른 설치
 │
@@ -365,28 +454,37 @@ Claudecode-Agent/
 │   ├── 00-orchestrator.md  ·  01-planner.md  ·  02-implementer.md
 │   ├── 03-reviewer.md  ·  04-tester.md  ·  05-security-auditor.md
 │   ├── 06-performance-optimizer.md  ·  07-database-expert.md
-│   └── 08-documenter.md
+│   ├── 08-documenter.md
+│   ├── 09-harness-designer.md        ← 하네스 설계 에이전트
+│   └── 10-pipeline-orchestrator.md   ← 파이프라인 관리 에이전트
 │
 ├── .claude/commands/                 ← 슬래시 커맨드 → ~/.claude/commands/
 │   ├── snippet.md  ·  handoff.md  ·  cost.md
-│   ├── review-diff.md                ← 신규
-│   └── remind.md                     ← 신규
+│   ├── review-diff.md  ·  remind.md
+│   ├── harness.md  ·  pipeline.md
+│   └── lessons.md                    ← 신규 /lessons
 │
 ├── snippets/defaults.json            ← 기본 프롬프트 템플릿 20개
 │
 ├── tools/
 │   ├── snippet.py  ·  claude-handoff.py  ·  claude-cost.py
-│   ├── claude-review-diff.py         ← 신규
-│   ├── claude-remind.py              ← 신규
+│   ├── claude-review-diff.py  ·  claude-remind.py
+│   ├── claude-harness.py  ·  claude-pipeline.py
+│   ├── claude-lessons.py             ← 신규 실패/교훈 기록
 │   ├── install-tools.ps1  ·  install-tools.sh
 │
 ├── rust/claude-tools/src/
 │   ├── main.rs  ·  snippet.rs  ·  handoff.rs  ·  cost.rs
-│   ├── watch.rs  ·  env.rs (신규)  ·  colors.rs
+│   ├── watch.rs  ·  env.rs  ·  colors.rs
+│
+├── examples/
+│   └── mcp-lessons-server.py         ← 신규 MCP 서버 예제
 │
 └── docs/
     ├── SETUP.md / SETUP.ko.md
     ├── AGENT-CHEATSHEET.md / .ko.md
+    ├── HARNESS-GUIDE.md / .ko.md
+    ├── MCP-GUIDE.md / .ko.md         ← 신규
     ├── INTEGRATION.md / .ko.md
     ├── CONTRIBUTING.md / .ko.md
     └── CLAUDE.md / .ko.md
@@ -405,6 +503,7 @@ Claudecode-Agent/
 | 환경 상태 확인 | `claude-tools env` |
 | 미완료 작업으로 재개 | `claude-remind \| claude` |
 | 전체 세션 복원 | `claude-handoff load \| claude` |
+| 이 영역의 과거 실패 회상 | `claude-lessons context --tag X \| claude` |
 
 ---
 
@@ -443,6 +542,8 @@ winget install GnuWin32.Make
 |------|--------|---------|
 | 환경 세팅 가이드 | [SETUP.ko.md](docs/SETUP.ko.md) | [SETUP.md](docs/SETUP.md) |
 | 에이전트 치트시트 | [AGENT-CHEATSHEET.ko.md](docs/AGENT-CHEATSHEET.ko.md) | [AGENT-CHEATSHEET.md](docs/AGENT-CHEATSHEET.md) |
+| 하네스 설계 가이드 | [HARNESS-GUIDE.ko.md](docs/HARNESS-GUIDE.ko.md) | [HARNESS-GUIDE.md](docs/HARNESS-GUIDE.md) |
+| MCP 서버 가이드 | [MCP-GUIDE.ko.md](docs/MCP-GUIDE.ko.md) | [MCP-GUIDE.md](docs/MCP-GUIDE.md) |
 | 통합 가이드 | [INTEGRATION.ko.md](docs/INTEGRATION.ko.md) | [INTEGRATION.md](docs/INTEGRATION.md) |
 | 기여 가이드 | [CONTRIBUTING.ko.md](docs/CONTRIBUTING.ko.md) | [CONTRIBUTING.md](docs/CONTRIBUTING.md) |
 | 코딩 가이드라인 | [CLAUDE.ko.md](docs/CLAUDE.ko.md) | [CLAUDE.md](docs/CLAUDE.md) |
