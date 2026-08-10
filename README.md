@@ -523,8 +523,3 @@ winget install GnuWin32.Make
 
 See [CONTRIBUTING.md](docs/CONTRIBUTING.md) for the full guide.
 
----
-
-## License
-
-[MIT](LICENSE)
