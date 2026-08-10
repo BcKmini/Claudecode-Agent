@@ -99,6 +99,8 @@ docker run -d --restart always \
 docker compose run rag-ingest   # 코드베이스 인덱싱
 ```
 
+> 이 레포 자체의 도구(예: `claude-lessons`)를 수동 파이프 대신 MCP 서버로 만드는 것은 별개의, 더 작은 규모의 패턴입니다 — [MCP-GUIDE.ko.md](MCP-GUIDE.ko.md) 참고.
+
 ### 4. 이벤트 라우팅 비교
 
 | 기능 | Claude Code | claw-code |

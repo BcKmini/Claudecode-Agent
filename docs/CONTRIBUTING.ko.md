@@ -97,6 +97,10 @@ python tools/snippet.py run my-snippet --dry-run
 - `NO_COLOR` 환경변수 반드시 준수
 - 종료 코드: `0` 성공, `1` 찾을 수 없음/이미 존재, `2` 사용법 오류
 
+"외부 의존성 없음" 규칙의 유일한 예외는 `examples/`입니다 — MCP 서버처럼 서드파티 패키지가
+정말로 필요한 실행 가능한 연동 예제를 위한 디렉토리입니다. 그런 예제는 `tools/`에 넣지 말고,
+의존성을 예제의 docstring과 (관련 있다면) `docs/MCP-GUIDE.md`에 명확히 밝히세요.
+
 ### Rust (claude-tools)
 - `cargo check` 에러 없어야 함
 - `cargo clippy` 경고 최소화
