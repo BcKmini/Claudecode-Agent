@@ -23,14 +23,11 @@ LESSONS_DIR = Path.home() / ".claude" / "lessons"
 # ---------------------------------------------------------------------------
 # Color support
 # ---------------------------------------------------------------------------
-
-
 def _enable_win_vt() -> None:
     if sys.platform != "win32":
         return
     try:
         import ctypes
-
         k = ctypes.windll.kernel32
         k.SetConsoleMode(k.GetStdHandle(-11), 7)
     except Exception:
