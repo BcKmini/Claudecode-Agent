@@ -29,7 +29,16 @@ python --version   # 3.8+ required
 make status        # check what's installed
 ```
 
-`snippet.py`, `claude-handoff.py`, `claude-cost.py`, `claude-review-diff.py`, `claude-remind.py` all use only the Python standard library — no `pip install` needed.
+`snippet.py`, `claude-handoff.py`, `claude-cost.py`, `claude-review-diff.py`, `claude-remind.py`, `claude-harness.py`, `claude-pipeline.py`, `claude-lessons.py` all use only the Python standard library — no `pip install` needed to *run* them. Testing them does need dev dependencies:
+
+```bash
+pip install tox
+tox              # full matrix: py38-py313 (skips interpreters you don't have) + lint + fmt-check
+tox -e py        # just run tests/ on your current interpreter
+tox -e lint      # ruff check tools/ tests/
+```
+
+Ruff's config lives in `pyproject.toml` — it's scoped to `E`/`F`/`I`/`UP` (real bugs, unused imports, import order, modernization), not the full default ruleset, and `E402` is ignored because every tool deliberately puts its `VERSION` constant right after the docstring, before imports. `fmt-check` only covers `tools/claude-lessons.py` and `tests/` — the older tools use a deliberate hand-aligned style that `ruff format` would flatten, so it isn't enforced repo-wide.
 
 For the Rust binary:
 
@@ -37,6 +46,9 @@ For the Rust binary:
 cd rust
 cargo check   # verify build
 cargo build --release
+
+cargo install cargo-msrv --locked
+cd claude-tools && cargo msrv verify   # confirm it still builds on the declared rust-version
 ```
 
 ---
@@ -82,9 +94,10 @@ python tools/snippet.py run my-snippet --dry-run
    - Respect `NO_COLOR` environment variable
 2. Add `.claude/commands/<name>.md` slash command doc
 3. Add the tool to `Makefile` → `install-tools` target and `status` target
-4. If adding a Rust implementation, add `rust/claude-tools/src/<name>.rs` and wire it into `main.rs`
-5. Update `README.md` and `README.ko.md` tool sections, slash command table, and repo layout
-6. Update `docs/AGENT-CHEATSHEET.md` and `docs/AGENT-CHEATSHEET.ko.md`
+4. Add `tests/test_<name>.py` (subprocess-based, using the `run_tool`/`home`/`git_repo` fixtures in `tests/conftest.py`) and confirm `tox -e py,lint` passes
+5. If adding a Rust implementation, add `rust/claude-tools/src/<name>.rs` and wire it into `main.rs`
+6. Update `README.md` and `README.ko.md` tool sections, slash command table, and repo layout
+7. Update `docs/AGENT-CHEATSHEET.md` and `docs/AGENT-CHEATSHEET.ko.md`
 
 ---
 
@@ -116,11 +129,13 @@ examples (e.g. an MCP server) that legitimately need a third-party package. Keep
 - [ ] `snippet import snippets/defaults.json` still works
 - [ ] `cargo check` passes (Rust changes)
 - [ ] `make test` passes
+- [ ] `tox` passes — at minimum `tox -e py,lint` (Python changes)
+- [ ] `cargo msrv verify` passes (Rust changes — confirms the declared `rust-version` still builds)
 - [ ] README tables updated if new snippets / agents / tools added
 - [ ] **Both EN and KO docs updated** (README, CHEATSHEET, SETUP, INTEGRATION as applicable)
 - [ ] Slash command `.md` added if new tool introduced
 - [ ] `Makefile` updated if new tool added
-- [ ] No new external dependencies introduced
+- [ ] No new external dependencies introduced in `tools/` (an `examples/` script may declare one — see Code Style)
 
 ---
 

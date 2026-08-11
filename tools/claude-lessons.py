@@ -23,7 +23,6 @@ LESSONS_DIR = Path.home() / ".claude" / "lessons"
 # ---------------------------------------------------------------------------
 # Color support
 # ---------------------------------------------------------------------------
-
 def _enable_win_vt() -> None:
     if sys.platform != "win32":
         return
@@ -43,17 +42,34 @@ def _c(code: str, text: str) -> str:
     return f"\033[{code}m{text}\033[0m" if _COLOR else text
 
 
-def green(s):   return _c("32", s)
-def yellow(s):  return _c("33", s)
-def cyan(s):    return _c("36", s)
-def red(s):     return _c("31", s)
-def bold(s):    return _c("1",  s)
-def dim(s):     return _c("2",  s)
+def green(s):
+    return _c("32", s)
+
+
+def yellow(s):
+    return _c("33", s)
+
+
+def cyan(s):
+    return _c("36", s)
+
+
+def red(s):
+    return _c("31", s)
+
+
+def bold(s):
+    return _c("1", s)
+
+
+def dim(s):
+    return _c("2", s)
 
 
 # ---------------------------------------------------------------------------
 # Storage
 # ---------------------------------------------------------------------------
+
 
 def _lesson_id() -> str:
     """Timestamp-based ID, disambiguated on collision so rapid adds never overwrite."""
@@ -126,6 +142,7 @@ def _list_lessons() -> list:
 # Commands
 # ---------------------------------------------------------------------------
 
+
 def cmd_add(args):
     LESSONS_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -165,9 +182,9 @@ def cmd_list(args):
     print(f"\n  {bold('id'):<22}  {bold('tags'):<24}  {bold('title')}")
     print("  " + dim("-" * 90))
     for item in items:
-        print(f"  {cyan(item['id']):<{22+9}}  "
-              f"{dim(item['tags'] or '-'):<{24+9}}  "
-              f"{item['title']}")
+        print(
+            f"  {cyan(item['id']):<{22 + 9}}  {dim(item['tags'] or '-'):<{24 + 9}}  {item['title']}"
+        )
     print(f"\n  {dim(str(len(items)) + ' lesson(s)')}\n")
 
 
@@ -201,9 +218,9 @@ def cmd_search(args):
     print(f"\n  {bold('id'):<22}  {bold('tags'):<24}  {bold('title')}")
     print("  " + dim("-" * 90))
     for item in matches:
-        print(f"  {cyan(item['id']):<{22+9}}  "
-              f"{dim(item['tags'] or '-'):<{24+9}}  "
-              f"{item['title']}")
+        print(
+            f"  {cyan(item['id']):<{22 + 9}}  {dim(item['tags'] or '-'):<{24 + 9}}  {item['title']}"
+        )
     print(f"\n  {dim(str(len(matches)) + ' match(es)')}\n")
 
 
@@ -230,8 +247,7 @@ def cmd_context(args):
         print(f"---\n{item['content']}")
 
     if sys.stdout.isatty():
-        print(dim("\n-- Tip: pipe to claude:  claude-lessons context | claude"),
-              file=sys.stderr)
+        print(dim("\n-- Tip: pipe to claude:  claude-lessons context | claude"), file=sys.stderr)
 
 
 def cmd_version(args):
@@ -241,6 +257,7 @@ def cmd_version(args):
 # ---------------------------------------------------------------------------
 # Argument parser
 # ---------------------------------------------------------------------------
+
 
 def _build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(
@@ -284,8 +301,9 @@ examples:
     s.add_argument("query", help="Keyword to search for")
     s.set_defaults(func=cmd_search)
 
-    s = sub.add_parser("context",
-                       help="Print matching lessons  (pipe to claude for session-start context)")
+    s = sub.add_parser(
+        "context", help="Print matching lessons  (pipe to claude for session-start context)"
+    )
     s.add_argument("--limit", "-n", type=int, default=5, help="Max lessons to include (default: 5)")
     s.add_argument("--tag", help="Only include lessons matching this tag")
     s.set_defaults(func=cmd_context)

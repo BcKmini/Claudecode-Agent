@@ -36,16 +36,20 @@ else
 fi
 
 # ── Python ─────────────────────────────────────────────────────────────────
+# Scoped to claude-lessons.py + tests/, not all of tools/: most existing
+# tools/*.py use a deliberate hand-aligned style (aligned `=`, aligned dict
+# values) that `ruff format` would flatten. See tox.ini's fmt-check comment.
+PY_FMT_TARGETS=("$REPO_ROOT/tools/claude-lessons.py" "$REPO_ROOT/tests/")
 if command -v ruff &>/dev/null; then
   if [ "$CHECK" -eq 1 ]; then
-    if ruff format --check "$REPO_ROOT/tools/" 2>/dev/null; then
+    if ruff format --check "${PY_FMT_TARGETS[@]}" 2>/dev/null; then
       ok "Python: ruff format check passed"
     else
       fail "Python: ruff format check failed — run: bash scripts/fmt.sh"
       FAILURES=$((FAILURES+1))
     fi
   else
-    ruff format "$REPO_ROOT/tools/" 2>/dev/null && ok "Python: ruff format applied"
+    ruff format "${PY_FMT_TARGETS[@]}" 2>/dev/null && ok "Python: ruff format applied"
   fi
 else
   printf '  skipping Python (ruff not found)\n'

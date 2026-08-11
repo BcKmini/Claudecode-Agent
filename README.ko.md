@@ -8,7 +8,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](LICENSE)
 [![Python 3.8+](https://img.shields.io/badge/Python-3.8%2B-blue?style=flat-square&logo=python&logoColor=white)](https://www.python.org)
-[![Rust](https://img.shields.io/badge/Rust-1.75%2B-orange?style=flat-square&logo=rust)](https://www.rust-lang.org)
+[![Rust](https://img.shields.io/badge/Rust-1.78%2B-orange?style=flat-square&logo=rust)](https://www.rust-lang.org)
 [![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey?style=flat-square)](https://github.com/BcKmini/Claudecode-Agent)
 [![Claude Code](https://img.shields.io/badge/Claude_Code-Compatible-blueviolet?style=flat-square&logo=anthropic)](https://claude.ai/code)
 [![Agents](https://img.shields.io/badge/Agents-11-green?style=flat-square)](#에이전트-구성)
@@ -431,9 +431,11 @@ make help           # 전체 타겟 목록
 make install        # 에이전트 + 슬래시 커맨드 + Python 도구
 make install-rust   # Rust 바이너리 빌드 및 설치
 make build          # cargo build --release
-make test           # 전체 테스트
-make lint           # clippy + ruff
-make fmt            # rustfmt + ruff format
+make test           # 빠른 스모크 테스트 (추가 의존성 없음)
+make tox            # 전체 Python 테스트 매트릭스(py38-py313) + lint + fmt-check
+make msrv           # Rust 크레이트가 명시된 MSRV에서 빌드되는지 검증
+make lint           # clippy (Rust)
+make fmt            # rustfmt + ruff format (범위 한정 — CONTRIBUTING.ko.md 참고)
 make status         # git log + 도구 설치 상태 확인
 make env            # Claude 환경 헬스체크
 make clean          # 빌드 아티팩트 제거
@@ -446,6 +448,8 @@ make clean          # 빌드 아티팩트 제거
 ```
 claude-code-use/
 ├── Makefile                          ← 빌드 / 설치 / 테스트 / 정리
+├── tox.ini                           ← Python 테스트 매트릭스 + lint + fmt-check
+├── pyproject.toml                    ← ruff 설정 (이 저장소 스타일에 맞게 범위 한정)
 ├── install.sh                        ← 원라인 설치 스크립트
 ├── setup-agents.ps1                  ← Windows 빠른 설치
 ├── setup-agents.sh                   ← macOS / Linux 빠른 설치
@@ -472,6 +476,10 @@ claude-code-use/
 │   ├── claude-harness.py  ·  claude-pipeline.py
 │   ├── claude-lessons.py             ← 신규 실패/교훈 기록
 │   ├── install-tools.ps1  ·  install-tools.sh
+│
+├── tests/                            ← tools/*.py용 pytest 스위트
+│   ├── conftest.py                   ← run_tool / home / git_repo 픽스처
+│   └── test_*.py                     ← 도구당 파일 하나
 │
 ├── rust/claude-tools/src/
 │   ├── main.rs  ·  snippet.rs  ·  handoff.rs  ·  cost.rs

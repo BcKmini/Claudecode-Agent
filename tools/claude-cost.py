@@ -195,6 +195,7 @@ def _load_budget() -> dict:
 
 
 def _save_budget(data: dict) -> None:
+    BUDGET_FILE.parent.mkdir(parents=True, exist_ok=True)
     BUDGET_FILE.write_text(json.dumps(data, indent=2), encoding="utf-8")
 
 
@@ -218,7 +219,6 @@ def cmd_estimate(args):
         prompt_text = snippets[args.snippet]["prompt"]
         # Fill template vars if provided
         if args.var:
-            import re
             for pair in args.var:
                 if "=" not in pair:
                     continue

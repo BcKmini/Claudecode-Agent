@@ -29,7 +29,16 @@ python --version   # 3.8+ 필요
 make status        # 설치 상태 확인
 ```
 
-`snippet.py`, `claude-handoff.py`, `claude-cost.py`, `claude-review-diff.py`, `claude-remind.py` 모두 Python 표준 라이브러리만 사용합니다 — `pip install` 불필요.
+`snippet.py`, `claude-handoff.py`, `claude-cost.py`, `claude-review-diff.py`, `claude-remind.py`, `claude-harness.py`, `claude-pipeline.py`, `claude-lessons.py` 모두 Python 표준 라이브러리만 사용합니다 — *실행*에는 `pip install` 불필요. 테스트에는 dev 의존성이 필요합니다:
+
+```bash
+pip install tox
+tox              # 전체 매트릭스: py38-py313(설치 안 된 버전은 건너뜀) + lint + fmt-check
+tox -e py        # 현재 인터프리터로 tests/만 실행
+tox -e lint      # ruff check tools/ tests/
+```
+
+ruff 설정은 `pyproject.toml`에 있습니다 — 전체 기본 룰셋이 아니라 `E`/`F`/`I`/`UP`(실질적 버그, 미사용 import, import 순서, 문법 현대화)로 범위를 좁혔고, `E402`는 무시합니다 — 모든 도구가 docstring 바로 뒤, import보다 먼저 `VERSION` 상수를 두는 게 의도된 스타일이기 때문입니다. `fmt-check`는 `tools/claude-lessons.py`와 `tests/`만 검사합니다 — 기존 도구들은 `ruff format`이 없애버릴 의도적인 정렬 스타일을 쓰고 있어서, 저장소 전체에는 강제하지 않습니다.
 
 Rust 바이너리:
 
@@ -37,6 +46,9 @@ Rust 바이너리:
 cd rust
 cargo check   # 빌드 확인
 cargo build --release
+
+cargo install cargo-msrv --locked
+cd claude-tools && cargo msrv verify   # 명시된 rust-version에서 여전히 빌드되는지 확인
 ```
 
 ---
@@ -82,9 +94,10 @@ python tools/snippet.py run my-snippet --dry-run
    - `NO_COLOR` 환경변수 준수
 2. `.claude/commands/<name>.md` 슬래시 커맨드 문서 추가
 3. `Makefile` → `install-tools` 타겟과 `status` 타겟에 추가
-4. Rust 구현 추가 시: `rust/claude-tools/src/<name>.rs` 작성 후 `main.rs`에 연결
-5. `README.md`와 `README.ko.md`의 도구 섹션, 슬래시 커맨드 테이블, 저장소 구조 업데이트
-6. `docs/AGENT-CHEATSHEET.md`와 `docs/AGENT-CHEATSHEET.ko.md` 업데이트
+4. `tests/test_<name>.py` 추가 (`tests/conftest.py`의 `run_tool`/`home`/`git_repo` 픽스처 사용, subprocess 기반) 후 `tox -e py,lint` 통과 확인
+5. Rust 구현 추가 시: `rust/claude-tools/src/<name>.rs` 작성 후 `main.rs`에 연결
+6. `README.md`와 `README.ko.md`의 도구 섹션, 슬래시 커맨드 테이블, 저장소 구조 업데이트
+7. `docs/AGENT-CHEATSHEET.md`와 `docs/AGENT-CHEATSHEET.ko.md` 업데이트
 
 ---
 
@@ -116,11 +129,13 @@ python tools/snippet.py run my-snippet --dry-run
 - [ ] `snippet import snippets/defaults.json` 정상 작동
 - [ ] `cargo check` 통과 (Rust 변경 시)
 - [ ] `make test` 통과
+- [ ] `tox` 통과 — 최소 `tox -e py,lint` (Python 변경 시)
+- [ ] `cargo msrv verify` 통과 (Rust 변경 시 — 명시된 `rust-version`에서 여전히 빌드되는지 확인)
 - [ ] 새 스니펫·에이전트·도구 추가 시 README 테이블 업데이트됨
 - [ ] **EN/KO 문서 쌍 모두 업데이트됨** (README, CHEATSHEET, SETUP, INTEGRATION 해당 항목)
 - [ ] 새 도구 추가 시 슬래시 커맨드 `.md` 파일 추가됨
 - [ ] 새 도구 추가 시 `Makefile` 업데이트됨
-- [ ] 외부 의존성 새로 추가하지 않음
+- [ ] `tools/`에는 외부 의존성 새로 추가하지 않음 (`examples/` 스크립트는 예외 — Code Style 참고)
 
 ---
 
